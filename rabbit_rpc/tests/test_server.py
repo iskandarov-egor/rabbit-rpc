@@ -1,5 +1,5 @@
-from exceptions import RabbitRpcException
-from rabbit_rpc_server import RabbitRpcServer
+from rabbit_rpc.exceptions import RabbitRpcException
+from rabbit_rpc.rabbit_rpc_server import RabbitRpcServer
 
 
 def movie_info(movie, detail=True):

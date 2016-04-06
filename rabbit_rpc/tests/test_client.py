@@ -1,8 +1,5 @@
-from exceptions import RabbitRpcException, BadResponseException
-from request import RabbitRpcRequest
-
-
-
+from rabbit_rpc.exceptions import RabbitRpcException, BadResponseException
+from rabbit_rpc.request import RabbitRpcRequest
 
 
 rpc_request = RabbitRpcRequest()
