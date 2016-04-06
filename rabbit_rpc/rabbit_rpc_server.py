@@ -4,7 +4,7 @@ import traceback
 import pika
 import json
 
-from exceptions import RabbitRpcException
+from rabbit_rpc.exceptions import RabbitRpcException
 
 
 class RawRabbitRpcServer:

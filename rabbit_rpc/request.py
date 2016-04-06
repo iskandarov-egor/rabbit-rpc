@@ -1,7 +1,7 @@
 import json
 
-from exceptions import RabbitRpcException, BadResponseException
-from rpc_raw import rpc_request_raw
+from rabbit_rpc.exceptions import RabbitRpcException, BadResponseException
+from rabbit_rpc.rpc_raw import rpc_request_raw
 from threading import Thread
 
 
