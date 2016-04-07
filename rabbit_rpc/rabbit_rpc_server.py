@@ -22,7 +22,10 @@ class RawRabbitRpcServer:
         self._channel.queue_bind(queue=queue_name, exchange=exchange, routing_key=routing_key)
 
         def on_request(ch, method, props, body):
+            print(' ** rabbit-prc received message: ** ')
+
             response = callback(body)
+            print(' **            end               ** ')
 
             ch.basic_publish(exchange='',
                              routing_key=props.reply_to,
