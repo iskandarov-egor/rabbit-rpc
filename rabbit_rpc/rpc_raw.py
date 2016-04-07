@@ -3,14 +3,13 @@ import uuid
 import pika
 
 
-def rpc_request_raw(rabbit_host, target_queue, request_body, queue_declare=True):
+def rpc_request_raw(rabbit_host, exchange, routing_key, request_body):
     connection = pika.BlockingConnection(pika.ConnectionParameters(
         host=rabbit_host, connection_attempts=10, retry_delay=10), )
     channel = connection.channel()
-    result = channel.queue_declare(exclusive=True)
-    if queue_declare:
-        channel.queue_declare(queue=target_queue)
-    callback_queue = result.method.queue
+    queue_info = channel.queue_declare(exclusive=True)
+    channel.exchange_declare(exchange=exchange, exchange_type='direct')
+    callback_queue = queue_info.method.queue
     corr_id = str(uuid.uuid4())
     response = None
 
@@ -22,8 +21,8 @@ def rpc_request_raw(rabbit_host, target_queue, request_body, queue_declare=True)
 
     channel.basic_consume(on_response, no_ack=True, queue=callback_queue)
 
-    channel.basic_publish(exchange='',
-                          routing_key=target_queue,
+    channel.basic_publish(exchange=exchange,
+                          routing_key=routing_key,
                           properties=pika.BasicProperties(
                               reply_to=callback_queue,
                               correlation_id=corr_id,

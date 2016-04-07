@@ -8,12 +8,18 @@ from rabbit_rpc.exceptions import RabbitRpcException
 
 
 class RawRabbitRpcServer:
-    def __init__(self, host, callback, rpc_queue):
+    def __init__(self, host, callback, exchange, routing_key, queue_name=None):
         self._connection = pika.BlockingConnection(
             pika.ConnectionParameters(host=host, connection_attempts=10, retry_delay=10))
         self._channel = self._connection.channel()
         self._channel.basic_qos(prefetch_count=1)
-        self._channel.queue_declare(queue=rpc_queue)
+        self._channel.exchange_declare(exchange=exchange, exchange_type='direct')
+        if queue_name is None:
+            queue_info = self._channel.queue_declare(exclusive=True)
+            queue_name = queue_info.method.queue
+        else:
+            self._channel.queue_declare(queue=queue_name)
+        self._channel.queue_bind(queue=queue_name, exchange=exchange, routing_key=routing_key)
 
         def on_request(ch, method, props, body):
             response = callback(body)
@@ -24,7 +30,7 @@ class RawRabbitRpcServer:
                              body=response)
             ch.basic_ack(delivery_tag=method.delivery_tag)
 
-        self._channel.basic_consume(on_request, queue=rpc_queue)
+        self._channel.basic_consume(on_request, queue=queue_name)
 
     def start(self):
         self._channel.start_consuming()
@@ -38,7 +44,7 @@ def get_function_arguments(f):
 
 
 class RabbitRpcServer:
-    def __init__(self, host, rpc_queue):
+    def __init__(self, host, exchange, routing_key):
         self.callbacks = {}
 
         def _callback(body):
@@ -97,7 +103,7 @@ class RabbitRpcServer:
                 })
             return response
 
-        self.raw_server = RawRabbitRpcServer(host=host, callback=_callback, rpc_queue=rpc_queue)
+        self.raw_server = RawRabbitRpcServer(host=host, callback=_callback, exchange=exchange, routing_key=routing_key)
 
     def start(self):
         self.raw_server.start()

@@ -13,6 +13,6 @@ def movie_info(movie, detail=True):
     else:
         raise RabbitRpcException(status_code='bad_movie')
 
-server = RabbitRpcServer(host='localhost', rpc_queue='test')
+server = RabbitRpcServer(host='localhost', exchange='exc', routing_key='key')
 server.add_callback(movie_info)
 server.start()

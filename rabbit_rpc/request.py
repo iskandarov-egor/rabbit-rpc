@@ -11,19 +11,19 @@ class RabbitRpcRequest:
         self._in_progress = False
         self.return_fields = None
 
-    def _threaded_request(self, rabbit_host, target_queue, request_body, queue_declare):
+    def _threaded_request(self, rabbit_host, exchange, routing_key, request_body):
         self.returned_json = json.loads(rpc_request_raw(
             rabbit_host=rabbit_host,
-            target_queue=target_queue,
-            request_body=request_body,
-            queue_declare=queue_declare
+            exchange=exchange,
+            routing_key=routing_key,
+            request_body=request_body
         ))
         self._in_progress = False
 
     def in_progress(self):
         return self._in_progress
 
-    def request(self, rabbit_host, target_queue, function, arguments, return_fields, queue_declare=True):
+    def request(self, rabbit_host, exchange, routing_key, function, arguments, return_fields):
         self._in_progress = True
         self.return_fields = return_fields
         request = {
@@ -33,7 +33,7 @@ class RabbitRpcRequest:
 
         self.returned_json = None
         thread = Thread(target=self._threaded_request,
-                        args=(rabbit_host, target_queue, json.dumps(request), queue_declare))
+                        args=(rabbit_host, exchange, routing_key, json.dumps(request)))
         thread.start()
 
     def response(self):

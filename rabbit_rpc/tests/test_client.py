@@ -10,11 +10,11 @@ arguments = {
 
 rpc_request.request(
     rabbit_host='localhost',
-    target_queue='test',
+    exchange='exc',
+    routing_key='key',
     function='movie_info',
     arguments=arguments,
-    return_fields=['title', 'actor'],
-    queue_declare=True
+    return_fields=['title', 'actor']
 )
 
 while rpc_request.in_progress():
@@ -26,11 +26,11 @@ print(title, actor)
 
 rpc_request.request(
     rabbit_host='localhost',
-    target_queue='test',
+    exchange='exc',
+    routing_key='key',
     function='movie_info2',
     arguments=arguments,
-    return_fields=['title', 'actor'],
-    queue_declare=True
+    return_fields=['title', 'actor']
 )
 
 while rpc_request.in_progress():
@@ -43,11 +43,11 @@ except RabbitRpcException as e:
 
 rpc_request.request(
     rabbit_host='localhost',
-    target_queue='test',
+    exchange='exc',
+    routing_key='key',
     function='movie_info',
     arguments=arguments,
     return_fields=['title2', 'actor'],
-    queue_declare=True
 )
 
 while rpc_request.in_progress():
