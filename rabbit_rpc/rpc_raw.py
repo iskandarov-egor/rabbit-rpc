@@ -21,11 +21,8 @@ def rpc_request_raw(rabbit_host, exchange, routing_key, request_body):
 
     channel.basic_consume(on_response, no_ack=True, queue=callback_queue)
 
-    print(' ** rabbit-rpc sending message ** ')
-    print('exchange: "%s", routing_key: "%s"' % (exchange, routing_key))
-    print('message body:')
+    print('rabbit-rpc sending message to "%s"."%s": ' % (exchange, routing_key))
     print(request_body)
-    print(' **           end              ** ')
 
     channel.basic_publish(exchange=exchange,
                           routing_key=routing_key,
