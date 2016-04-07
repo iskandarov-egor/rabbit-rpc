@@ -9,6 +9,7 @@ from rabbit_rpc.exceptions import RabbitRpcException
 
 class RawRabbitRpcServer:
     def __init__(self, host, callback, exchange, routing_key, queue_name=None):
+        print('creating rpc server host "%s" exchange "%s" routing_key "%s"' % (host, exchange, routing_key))
         self._connection = pika.BlockingConnection(
             pika.ConnectionParameters(host=host, connection_attempts=10, retry_delay=10))
         self._channel = self._connection.channel()
@@ -23,7 +24,7 @@ class RawRabbitRpcServer:
 
         def on_request(ch, method, props, body):
             print(' ** rabbit-prc received message: ** ')
-
+            print(body)
             response = callback(body)
             print(' **            end               ** ')
 
