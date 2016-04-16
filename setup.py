@@ -3,7 +3,7 @@
 
 from setuptools import setup, find_packages
 
-version = '0.123'
+version = '0.1234'
 
 setup(
     name='rabbit_rpc',
@@ -12,6 +12,5 @@ setup(
     install_requires=[
         'pika'
     ],
-    include_package_data=True,
-    package_dir={'rabbit_rpc': 'rabbit_rpc'}
+    include_package_data=True
 )

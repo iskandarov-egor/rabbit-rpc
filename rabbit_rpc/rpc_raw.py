@@ -1,9 +1,10 @@
 import uuid
 
 import pika
+import time
 
 
-def rpc_request_raw(rabbit_host, exchange, routing_key, request_body):
+def rpc_request_raw(rabbit_host, exchange, routing_key, request_body, timeout=None):
     connection = pika.BlockingConnection(pika.ConnectionParameters(
         host=rabbit_host, connection_attempts=10, retry_delay=10), )
     channel = connection.channel()
@@ -24,6 +25,8 @@ def rpc_request_raw(rabbit_host, exchange, routing_key, request_body):
     print('rabbit-rpc sending message to "%s"."%s": ' % (exchange, routing_key))
     print(request_body)
 
+    start_time = time.time()
+
     channel.basic_publish(exchange=exchange,
                           routing_key=routing_key,
                           properties=pika.BasicProperties(
@@ -32,6 +35,8 @@ def rpc_request_raw(rabbit_host, exchange, routing_key, request_body):
                           ),
                           body=request_body)
     while response is None:
-        connection.process_data_events(time_limit=0)
+        if timeout and time.time() - start_time > timeout:
+            raise TimeoutError()
+        connection.process_data_events(time_limit=timeout)
 
     return response

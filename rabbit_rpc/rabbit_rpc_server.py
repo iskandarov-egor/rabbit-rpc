@@ -29,6 +29,8 @@ class RawRabbitRpcServer:
             print(body)
             response = callback(body)
 
+            print('rabbit rpc server sending response:')
+            print(response)
             ch.basic_publish(exchange='',
                              routing_key=props.reply_to,
                              properties=pika.BasicProperties(correlation_id=props.correlation_id),
@@ -114,8 +116,10 @@ class RabbitRpcServer:
     def start(self):
         self.raw_server.start()
 
-    def add_callback(self, callback):
-        self.callbacks[callback.__name__] = callback
+    def add_callback(self, callback, name=None):
+        if name is None:
+            name = callback.__name__
+        self.callbacks[name] = callback
 
     def close(self):
         self.raw_server.close()

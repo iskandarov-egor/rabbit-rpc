@@ -1,14 +1,12 @@
 from rabbit_rpc.exceptions import RabbitRpcException, BadResponseException
-from rabbit_rpc.request import RabbitRpcRequest
+import rabbit_rpc
 
-
-rpc_request = RabbitRpcRequest()
 
 arguments = {
     'movie': 'batman'
 }
 
-rpc_request.request(
+rpc_request = rabbit_rpc.request(
     rabbit_host='localhost',
     exchange='exc',
     routing_key='key',
@@ -18,13 +16,13 @@ rpc_request.request(
 )
 
 while rpc_request.in_progress():
-    print('waiting')
+    # print('waiting')
     pass
 
 title, actor = rpc_request.response()
 print(title, actor)
 
-rpc_request.request(
+rpc_request = rabbit_rpc.request(
     rabbit_host='localhost',
     exchange='exc',
     routing_key='key',
@@ -41,7 +39,7 @@ try:
 except RabbitRpcException as e:
     print(e)
 
-rpc_request.request(
+rpc_request = rabbit_rpc.request(
     rabbit_host='localhost',
     exchange='exc',
     routing_key='key',
@@ -57,3 +55,17 @@ try:
     title, actor = rpc_request.response()
 except BadResponseException as e:
     print(e)
+
+rpc_request = rabbit_rpc.request(
+    rabbit_host='localhost',
+    exchange='exc',
+    routing_key='key',
+    function='movie_info',
+    arguments=arguments,
+    return_fields=None,
+)
+
+while rpc_request.in_progress():
+    pass
+
+print(rpc_request.response())
