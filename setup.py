@@ -3,7 +3,7 @@
 
 from setuptools import setup, find_packages
 
-version = '0.1234'
+version = '0.12345'
 
 setup(
     name='rabbit_rpc',

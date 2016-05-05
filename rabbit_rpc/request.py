@@ -78,7 +78,8 @@ def request(rabbit_host, exchange, routing_key, function, arguments, timeout=Non
             rabbit_host=rabbit_host,
             exchange=exchange,
             routing_key=routing_key,
-            request_body=json.dumps(request_body)
+            request_body=json.dumps(request_body),
+            timeout=timeout
         ))
         request_object._in_progress = False
 

@@ -12,7 +12,8 @@ rpc_request = rabbit_rpc.request(
     routing_key='key',
     function='movie_info',
     arguments=arguments,
-    return_fields=['title', 'actor']
+    return_fields=['title', 'actor'],
+    timeout=3
 )
 
 while rpc_request.in_progress():
