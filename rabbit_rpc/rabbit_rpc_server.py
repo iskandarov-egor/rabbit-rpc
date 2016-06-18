@@ -76,24 +76,25 @@ class RabbitRpcServer:
                     'message': 'arguments field not found in request'
                 })
 
-            arguments = []
+            # arguments = []
 
-            for param_name, param in inspect.signature(callback).parameters.items():
-                has_default = (param.default is not inspect.Parameter.empty)
-                is_provided = (param_name in request_arguments.keys())
-                if is_provided:
-                    arguments.append(request_arguments.get(param_name))
-                else:
-                    if has_default:
-                        arguments.append(param.default)
-                    else:
-                        return json.dumps({
-                            'status_code': 'bad_request',
-                            'message': 'argument "%s" not found in request' % param_name
-                        })
+            # for param_name, param in inspect.signature(callback).parameters.items():
+            #     if
+            #     has_default = (param.default is not inspect.Parameter.empty)
+            #     is_provided = (param_name in request_arguments.keys())
+            #     if is_provided:
+            #         arguments.append(request_arguments.pop(param_name))
+            #     else:
+            #         if has_default:
+            #             arguments.append(param.default)
+            #         else:
+            #             return json.dumps({
+            #                 'status_code': 'bad_request',
+            #                 'message': 'argument "%s" not found in request' % param_name
+            #             })
 
             try:
-                response = callback(*arguments)
+                response = callback(**request_arguments)
                 response = json.dumps({
                     'status_code': 'ok',
                     'response': response

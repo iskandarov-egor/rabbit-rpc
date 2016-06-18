@@ -6,67 +6,67 @@ arguments = {
     'movie': 'batman'
 }
 
-rpc_request = rabbit_rpc.request(
+response = rabbit_rpc.rpc(
     rabbit_host='localhost',
     exchange='exc',
     routing_key='key',
     function='movie_info',
-    arguments=arguments,
-    return_fields=['title', 'actor'],
-    timeout=3
+    arguments=arguments
 )
+while True:
+    res = response.check(0)
+    if res is not None:
+        response = res
+        break
 
-while rpc_request.in_progress():
-    # print('waiting')
-    pass
 
-title, actor = rpc_request.response()
+title, actor = response['title'], response['actor']
 print(title, actor)
 
-rpc_request = rabbit_rpc.request(
+response = rabbit_rpc.rpc(
     rabbit_host='localhost',
     exchange='exc',
     routing_key='key',
     function='movie_info2',
-    arguments=arguments,
-    return_fields=['title', 'actor']
+    arguments=arguments
 )
 
-while rpc_request.in_progress():
-    pass
-
 try:
-    title, actor = rpc_request.response()
+    response = response.check(None)
+    title, actor = response['title'], response['actor']
 except RabbitRpcException as e:
     print(e)
 
-rpc_request = rabbit_rpc.request(
+response = rabbit_rpc.rpc(
     rabbit_host='localhost',
     exchange='exc',
     routing_key='key',
     function='movie_info',
-    arguments=arguments,
-    return_fields=['title2', 'actor'],
+    arguments=arguments
 )
 
-while rpc_request.in_progress():
-    pass
-
 try:
-    title, actor = rpc_request.response()
+    response = response.check(None)
+    title, actor = response['title'], response['actor']
 except BadResponseException as e:
     print(e)
 
-rpc_request = rabbit_rpc.request(
+response = rabbit_rpc.rpc(
     rabbit_host='localhost',
     exchange='exc',
     routing_key='key',
     function='movie_info',
-    arguments=arguments,
-    return_fields=None,
+    arguments=arguments
 )
 
-while rpc_request.in_progress():
-    pass
+print(response.check(None))
 
-print(rpc_request.response())
+response = rabbit_rpc.rpc(
+    rabbit_host='localhost',
+    exchange='exc',
+    routing_key='key',
+    function='movie_info',
+    arguments={'key': 'super_key', 'movie': 'movie'}
+)
+print(response.check(None)['value'])
+

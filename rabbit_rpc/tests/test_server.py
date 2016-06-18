@@ -3,7 +3,9 @@ from rabbit_rpc.exceptions import RabbitRpcException
 from rabbit_rpc.rabbit_rpc_server import RabbitRpcServer
 
 
-def movie_info(movie, detail=True):
+def movie_info(movie, detail=True, **kwargs):
+    if kwargs.get('key') == 'super_key':
+        return {'value': 'super value'}
     if movie == 'batman':
         response = {
             'title': 'the batman'
