@@ -16,6 +16,8 @@ class Response:
         if timeout is None:
             while self._response is None:
                 self._connection.process_data_events(time_limit=None)
+        elif timeout == 0:
+            self._connection.process_data_events(time_limit=0)
         else:
             now = time.time()
             start_time = now
